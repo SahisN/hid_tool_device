@@ -1,0 +1,30 @@
+{
+    "accounts": [
+        "Google", "Amazon", "Twitter", "Back"
+    ],
+
+    "username": {
+        "Google" : ["test@gmail.com", "test2@gmail.com", "test3@gmail.com", "Back"],
+        "Amazon" : ["person1@gmail.com", "Back"],
+        "Twitter" : ["Nobody@gmail.com", "agruments@gmail.com", "Back"]
+    },
+
+    
+    "password" : {
+        "Google": {
+            "test@gmail.com": "test123",
+            "test2@gmail.com": "test345",
+            "test3@gmail.com": "test569"
+        },
+
+        "Amazon": {
+            "person1@gmail.com": "person321"
+        },
+
+        "Twitter" : {
+            "Nobody@gmail.com": "somebody123",
+            "agruments@gmail.com": "slientwarrior"
+        }
+    }
+  }
+  
