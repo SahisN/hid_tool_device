@@ -1,6 +1,7 @@
 import curses
 import time
 from modules.reader import ReadJson
+from modules.writer import Writer
 
 
 def display_elements(stdscr, accounts, current_selection):
@@ -25,9 +26,6 @@ def display_elements(stdscr, accounts, current_selection):
 
 
 def main(stdscr):
-    # load in json data
-    json_reader = ReadJson()
-
     while True:
         main_screen = display(stdscr, ["Password Manager", "Wireless keyboard", "Quit"])
 
@@ -35,10 +33,13 @@ def main(stdscr):
             return
 
         elif main_screen == "Password Manager":
-            account_screen(stdscr, json_reader)
+            account_screen(stdscr)
 
 
-def account_screen(stdscr, json_reader: ReadJson):
+def account_screen(stdscr):
+    # load in json data
+    json_reader = ReadJson()
+
     # get account list from json
     account_list = json_reader.get_accounts()
 
@@ -68,7 +69,8 @@ def username_screen(stdscr, account, json_reader: ReadJson):
             return
 
         else:
-            inject(stdscr, username)
+            password = json_reader.get_password(account_type=account, username=username)
+            inject(stdscr, username, password)
 
 
 def display(stdscr, item_list):
@@ -98,15 +100,22 @@ def display(stdscr, item_list):
             return item_list[current_selection]
 
 
-def inject(stdscr, account_name):
-    global timer
+def inject(stdscr, account_name, password):
+    # clear the screen
     stdscr.clear()
     stdscr.refresh()
 
-    stdscr.addstr(f"Injecting {account_name}'s password in 3 seconds")
+    # notify user about injection
+    stdscr.addstr(
+        f"Injecting {account_name}'s password in 3 seconds... password: {password}"
+    )
     stdscr.refresh()
+
+    # wait before injection
     time.sleep(3)
-    return
+
+    # load in writer
+    Writer.type_string(password)
 
 
 if __name__ == "__main__":
