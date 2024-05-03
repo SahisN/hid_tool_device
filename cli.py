@@ -1,5 +1,6 @@
 import curses
 import time
+from modules.reader import ReadJson
 
 
 def display_elements(stdscr, accounts, current_selection):
@@ -23,10 +24,10 @@ def display_elements(stdscr, accounts, current_selection):
     stdscr.refresh()
 
 
-# ["Google", "Amazon", "Twitter", "Back"]
-
-
 def main(stdscr):
+    # load in json data
+    json_reader = ReadJson()
+
     while True:
         main_screen = display(stdscr, ["Password Manager", "Wireless keyboard", "Quit"])
 
@@ -34,31 +35,40 @@ def main(stdscr):
             return
 
         elif main_screen == "Password Manager":
-            account_screen(stdscr)
+            account_screen(stdscr, json_reader)
 
 
-def account_screen(stdscr):
+def account_screen(stdscr, json_reader: ReadJson):
+    # get account list from json
+    account_list = json_reader.get_accounts()
+
     while True:
-        account = display(stdscr, ["Google", "Amazon", "Twitter", "Back"])
+        account = display(stdscr, account_list)
         # check if user wants to go back
         if account == "Back":
             return
 
         else:
-            option(stdscr=stdscr, option_list=["Inject", "Back"], account=account)
+            username_screen(
+                stdscr=stdscr,
+                account=account,
+                json_reader=json_reader,
+            )
 
 
-def option(stdscr, option_list, account):
+def username_screen(stdscr, account, json_reader: ReadJson):
+    # get username list from json depending on account list
+    username_list = json_reader.get_usernames(account_type=account)
+
     while True:
-        option = display(stdscr, option_list)
+        username = display(stdscr, username_list)
 
         # check if user wants to go back
-        if option == "Back":
+        if username == "Back":
             return
 
         else:
-            # fetch password based on the account selection
-            inject(stdscr, account_name=account)
+            inject(stdscr, username)
 
 
 def display(stdscr, item_list):
